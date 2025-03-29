@@ -7,7 +7,15 @@ RUN apk add --no-cache \
     unzip \
     upx \
     bash \
-    file
+    file \
+    php-pcntl \
+    php-tokenizer \
+    php-dom \
+    php-xml \
+    php-phar
+
+# If the above doesn't work, try enabling the PCNTL extension directly:
+RUN docker-php-ext-install pcntl
 
 # Set working directory
 WORKDIR /build-tools

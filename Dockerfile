@@ -20,9 +20,8 @@ WORKDIR /build-tools
 
 # Clone and set up static-php-cli from source
 RUN git clone https://github.com/crazywhalecc/static-php-cli.git
-RUN cd static-php-cli
-RUN composer install --no-dev --prefer-dist --ignore-platform-reqs
-RUN chmod +x bin/spc
+RUN composer install -d /build-tools/static-php-cli
+RUN chmod +x static-php-cli/bin/spc
 
 # Download box tool for PHAR creation
 RUN wget -O /usr/local/bin/box "https://github.com/box-project/box/releases/download/4.6.6/box.phar" \
@@ -54,10 +53,7 @@ RUN cd /build-tools/static-php-cli && \
     --with-upx-pack
 
 # Copy the micro.sfx to a known location for later reuse
-RUN cp /build-tools/static-php-cli/buildroot/micro.sfx /build-tools/build/bin/
-
-# Set up Composer
-COPY --from=composer:2.8.4 /usr/bin/composer /usr/bin/composer
+RUN cp /build-tools/static-php-cli/buildroot/bin/micro.sfx /build-tools/build/bin/
 
 # Default command to display info
 CMD ["echo", "PHP Builder image is ready for use"]

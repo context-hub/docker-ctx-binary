@@ -1,5 +1,5 @@
 # Use Windows Server Core as the base image
-FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS builder
+FROM mcr.microsoft.com/windows/servercore:ltsc2025 AS builder
 
 # Define build arguments
 ARG VERSION="latest"
@@ -28,9 +28,9 @@ RUN Invoke-WebRequest -Uri "https://github.com/box-project/box/releases/download
 RUN Invoke-WebRequest -Uri "https://dl.static-php.dev/static-php-cli/spc-bin/nightly/spc-windows-x64.exe" -OutFile ".build/bin/spc.exe"
 
 # Download required PHP extensions
-RUN .build/bin/spc.exe download micro `
-    --for-extensions=ctype,dom,filter,libxml,mbstring,phar,simplexml,sockets,tokenizer,xml,xmlwriter,curl `
-    --with-php=8.3 `
+RUN .build/bin/spc.exe download micro \
+    --for-extensions=ctype,dom,filter,libxml,mbstring,phar,simplexml,sockets,tokenizer,xml,xmlwriter,curl \
+    --with-php=8.3 \
     --prefer-pre-built
 
 # Install UPX for compression
@@ -40,8 +40,8 @@ RUN .build/bin/spc.exe install-pkg upx
 RUN .build/bin/spc.exe doctor --auto-fix
 
 # Build the self-executable binary with required extensions
-RUN .build/bin/spc.exe build "ctype,dom,filter,libxml,mbstring,phar,simplexml,sockets,tokenizer,xml,xmlwriter,curl" `
-    --build-micro `
+RUN .build/bin/spc.exe build "ctype,dom,filter,libxml,mbstring,phar,simplexml,sockets,tokenizer,xml,xmlwriter,curl" \
+    --build-micro  \
     --with-upx-pack
 
 # Default command to display info

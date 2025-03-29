@@ -1,29 +1,26 @@
+FROM composer:${COMPOSER_VERSION} AS composer
 FROM php:8.3-cli-alpine
 
-# Install required packages
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 RUN apk add --no-cache \
     wget \
     git \
     unzip \
     upx \
     bash \
-    file \
-    php-pcntl \
-    php-tokenizer \
-    php-dom \
-    php-xml \
-    php-phar
+    file
 
-# If the above doesn't work, try enabling the PCNTL extension directly:
-RUN docker-php-ext-install pcntl
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /build-tools
 
 # Clone and set up static-php-cli from source
-RUN git clone https://github.com/crazywhalecc/static-php-cli.git --depth=1 /build-tools/static-php-cli \
-    && cd /build-tools/static-php-cli \
-    && ./bin/setup-runtime
+RUN git clone https://github.com/crazywhalecc/static-php-cli.git
+RUN cd static-php-cli
+RUN composer install --no-dev --prefer-dist --ignore-platform-reqs
+RUN chmod +x bin/spc
 
 # Download box tool for PHAR creation
 RUN wget -O /usr/local/bin/box "https://github.com/box-project/box/releases/download/4.6.6/box.phar" \

@@ -1,3 +1,5 @@
+ARG COMPOSER_VERSION="2.8.4"
+
 FROM composer:${COMPOSER_VERSION} AS composer
 FROM php:8.3-cli-alpine
 
